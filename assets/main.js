@@ -198,6 +198,37 @@ function wireParallax(){
   window.addEventListener("resize", upd);
 }
 
+/* ---- 11) Region cards: WhatsApp deep-link + mouse-follow 3D tilt ---- */
+function wireRegions(){
+  const cards = [...document.querySelectorAll("[data-wa-region]")];
+  cards.forEach(a=>{
+    const region = a.getAttribute("data-wa-region");
+    const L = currentLang();
+    const msg = L==="tr"
+      ? `Merhaba, ${region} için özel transfer teklifi almak istiyorum.`
+      : `Hello, I'd like a private transfer quote for ${region}.`;
+    a.href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`;
+    a.target = "_blank"; a.rel = "noopener";
+  });
+
+  // 3D tilt — only on fine-pointer (mouse) devices, respects reduced motion
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if(window.matchMedia("(hover: none)").matches) return;
+  document.querySelectorAll("[data-tilt]").forEach(card=>{
+    card.addEventListener("pointermove", e=>{
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      const rx = (0.5 - py) * 9;
+      const ry = (px - 0.5) * 11;
+      card.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) translateY(-6px)`;
+      card.style.setProperty("--mx", (px*100).toFixed(1) + "%");
+      card.style.setProperty("--my", (py*100).toFixed(1) + "%");
+    });
+    card.addEventListener("pointerleave", ()=>{ card.style.transform = ""; });
+  });
+}
+
 /* ---- init ---- */
 document.addEventListener("DOMContentLoaded", ()=>{
   buildLangMenu();
@@ -207,6 +238,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   wireFaq();
   wireReveal();
   wireParallax();
+  wireRegions();
   wireForms();
   wireYear();
 });
