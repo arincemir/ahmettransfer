@@ -176,6 +176,28 @@ function wireYear(){
   document.querySelectorAll("[data-year]").forEach(el=> el.textContent = new Date().getFullYear());
 }
 
+/* ---- 10) Parallax drift on scroll (subtle "sliding" images) ---- */
+function wireParallax(){
+  const els = [...document.querySelectorAll("[data-parallax]")];
+  if(!els.length || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  let raf = 0;
+  const upd = ()=>{
+    raf = 0;
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    els.forEach(el=>{
+      const r = el.getBoundingClientRect();
+      if(r.bottom < -200 || r.top > vh+200) return;       // skip far off-screen
+      const mid = r.top + r.height/2;
+      const d = (mid - vh/2) / vh;                          // -1 (above) .. 1 (below)
+      const sp = parseFloat(el.dataset.parallax) || 0.12;
+      el.style.transform = "translate3d(0," + (d * sp * 100).toFixed(1) + "px,0)";
+    });
+  };
+  upd();
+  window.addEventListener("scroll", ()=>{ if(!raf) raf = requestAnimationFrame(upd); }, {passive:true});
+  window.addEventListener("resize", upd);
+}
+
 /* ---- init ---- */
 document.addEventListener("DOMContentLoaded", ()=>{
   buildLangMenu();
@@ -184,6 +206,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   wireChrome();
   wireFaq();
   wireReveal();
+  wireParallax();
   wireForms();
   wireYear();
 });
