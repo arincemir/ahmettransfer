@@ -335,6 +335,11 @@ h1,h2,h3,h4{font-family:var(--f-display);font-weight:700;line-height:1.08;margin
 .scene--hero{border-radius:0}
 .scene--hero .scene__icon{width:min(38vw,420px);max-width:460px;opacity:.5}
 .scene--hero::after{bottom:34%}
+/* Real vehicle photos inside fleet scene cards */
+.scene__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:transform .55s cubic-bezier(.22,1,.36,1)}
+.fleet-card:hover .scene__img{transform:scale(1.06)}
+.scene:has(.scene__img)::before{z-index:1;background:linear-gradient(to top,rgba(6,11,24,.82) 0%,rgba(6,11,24,.10) 48%,rgba(6,11,24,.34) 100%)}
+.scene:has(.scene__img)::after{display:none}
 .ph__tag{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;
   color:var(--gold-400);background:rgba(7,12,24,.6);border:1px solid var(--navy-line);padding:7px 13px;border-radius:var(--r-pill);
   display:inline-flex;gap:8px;align-items:center}

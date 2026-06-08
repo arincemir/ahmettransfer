@@ -4,3 +4,6 @@
 # editor / misc
 *.log
 Thumbs.db
+
+# local preview screenshots
+.preview/
