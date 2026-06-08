@@ -131,16 +131,24 @@ function wireReveal(){
   reveal();
   window.addEventListener("scroll", ()=>requestAnimationFrame(reveal), {passive:true});
   window.addEventListener("resize", reveal);
-  // GUARANTEED fallback — force every element visible with inline styles (beats any
-  // stuck/never-completing transition). Content is never left at opacity:0.
-  const force = ()=>els.forEach(e=>{
-    e.classList.add("in");
-    e.style.transition = "none";
-    e.style.opacity = "1";
-    e.style.transform = "none";
-  });
-  setTimeout(force, 1400);
-  window.addEventListener("load", ()=>setTimeout(force, 1400));
+  // Safety net — only force elements that are already in/above the viewport
+  // (so below-the-fold elements still animate when scrolled into view).
+  const force = ()=>{
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    els.forEach(e=>{
+      if(e.dataset.shown) return;
+      const r = e.getBoundingClientRect();
+      if(r.top < vh*0.94){
+        e.dataset.shown = "1";
+        e.classList.add("in");
+        e.style.transition = "none";
+        e.style.opacity = "1";
+        e.style.transform = "none";
+      }
+    });
+  };
+  setTimeout(force, 1600);
+  window.addEventListener("load", ()=>setTimeout(force, 1600));
 }
 
 /* ---- 8) Booking / quote forms → WhatsApp ---- */
